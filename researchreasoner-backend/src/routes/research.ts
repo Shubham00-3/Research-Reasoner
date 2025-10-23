@@ -6,7 +6,7 @@ import { PaperDownloadService } from '../services/paperDownloadService';
 import neo4jService from '../services/neo4jService';
 import path from 'path';
 import fs from 'fs';
-import { GraphRAGService } from '../services/GraphRAGService';
+import { GraphRAGService } from '../services/graphRagService';
 import { AdvancedRAGService } from '../services/AdvancedRAGService';
 import { groqService } from '../services/groqService';
 

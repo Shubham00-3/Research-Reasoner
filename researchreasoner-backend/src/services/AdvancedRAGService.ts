@@ -1,6 +1,6 @@
 // AdvancedRAGService.ts - Multi-Step Research Reasoning
 import neo4jService from './neo4jService';
-import { GraphRAGService } from './GraphRAGService';
+import { GraphRAGService } from './graphRagService';
 import { groqService } from './groqService';
 
 interface ResearchStep {
