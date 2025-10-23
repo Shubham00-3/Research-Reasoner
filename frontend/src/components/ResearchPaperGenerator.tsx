@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, Bot, User, Download, FileText, Eye, Edit, BookOpen, Brain, Zap } from 'lucide-react';
+import { getApiUrl } from '../config/api';
 
 interface Message {
   id: string;
@@ -50,7 +51,7 @@ const ResearchPaperGenerator: React.FC = () => {
   const initializeGenerator = async () => {
     try {
       // Initialize conversation for paper generation
-      const response = await fetch('http://localhost:3002/api/conversations/start', {
+      const response = await fetch(getApiUrl('/conversations/start'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -119,7 +120,7 @@ Example: *"Generate a survey paper on transformer architectures in NLP"*`,
 
     try {
       // Call the paper generation API
-      const response = await fetch('http://localhost:3002/api/generate-research-paper', {
+      const response = await fetch(getApiUrl('/generate-research-paper'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

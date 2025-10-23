@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { MessageCircle, Zap, Database, Brain, TrendingUp, Users, Settings } from 'lucide-react';
 import ResearchChat from '../ResearchChat';
+import { getApiUrl } from '../../config/api';
 
 interface ChatTabProps {
   data: any;
@@ -22,7 +23,7 @@ const ChatTab: React.FC<ChatTabProps> = ({ data, topic }) => {
     try {
       console.log('🔍 Checking chat readiness...');
       // ✅ Try database stats first to test if we can get system info
-      const response = await fetch('http://localhost:3002/api/database-stats');
+      const response = await fetch(getApiUrl('/database-stats'));
       
       if (response.ok) {
         const result = await response.json();
@@ -61,7 +62,7 @@ const ChatTab: React.FC<ChatTabProps> = ({ data, topic }) => {
     setIsInitializing(true);
     
     try {
-      const response = await fetch('http://localhost:3002/api/initialize-embeddings', {
+      const response = await fetch(getApiUrl('/initialize-embeddings'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

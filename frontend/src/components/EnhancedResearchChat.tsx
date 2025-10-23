@@ -5,6 +5,7 @@ import {
   Layers, TrendingUp, GitBranch, Download, Settings, BarChart3, MessageSquare,
   ChevronDown, ChevronRight, Clock, Target, Beaker, Zap
 } from 'lucide-react';
+import API_CONFIG, { getApiUrl } from '../config/api';
 
 interface ChatMessage {
   id: string;
@@ -86,7 +87,7 @@ const EnhancedResearchChat: React.FC<EnhancedResearchChatProps> = ({ topic }) =>
 
   const initializeConversation = async () => {
     try {
-      const response = await fetch('http://localhost:3002/api/conversations/start', {
+      const response = await fetch(getApiUrl('/conversations/start'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -130,7 +131,7 @@ const EnhancedResearchChat: React.FC<EnhancedResearchChatProps> = ({ topic }) =>
       
       if (mode === 'investigation') {
         // Use multi-step research investigation
-        response = await fetch('http://localhost:3002/api/research/investigate', {
+        response = await fetch(getApiUrl('/research/investigate'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -142,7 +143,7 @@ const EnhancedResearchChat: React.FC<EnhancedResearchChatProps> = ({ topic }) =>
         });
       } else {
         // Use the /api/chat endpoint instead
-     const response = await fetch('http://localhost:3002/api/chat', {
+     const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'https://researchreasoner-backend-production.up.railway.app/api'}/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -330,7 +331,7 @@ const EnhancedResearchChat: React.FC<EnhancedResearchChatProps> = ({ topic }) =>
     if (!conversationId) return;
     
     try {
-      const response = await fetch('http://localhost:3002/api/research/generate-report', {
+      const response = await fetch(getApiUrl('/research/generate-report'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

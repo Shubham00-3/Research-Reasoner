@@ -59,14 +59,22 @@ class Neo4jService {
       const username = process.env.NEO4J_USERNAME || 'neo4j';
       const password = process.env.NEO4J_PASSWORD || 'password123';
 
-      this.driver = neo4j.driver(uri, neo4j.auth.basic(username, password), {
-        encrypted: 'ENCRYPTION_OFF',
-        trust: 'TRUST_ALL_CERTIFICATES',
+      // Configure encryption based on URI scheme
+      const isSecureUri = uri.includes('+s://') || uri.includes('neo4j+s://') || uri.includes('bolt+s://');
+      const config: any = {
         maxConnectionLifetime: 30 * 60 * 1000,
         maxConnectionPoolSize: 100,
         connectionAcquisitionTimeout: 60000,
         disableLosslessIntegers: true
-      });
+      };
+
+      // Only add encryption config if NOT using secure URI scheme
+      if (!isSecureUri) {
+        config.encrypted = 'ENCRYPTION_OFF';
+        config.trust = 'TRUST_ALL_CERTIFICATES';
+      }
+
+      this.driver = neo4j.driver(uri, neo4j.auth.basic(username, password), config);
 
       const session = this.driver.session();
       try {

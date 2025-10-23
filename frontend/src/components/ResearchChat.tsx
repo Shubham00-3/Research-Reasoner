@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, Bot, User, ExternalLink, BookOpen, CheckCircle } from 'lucide-react';
+import { getApiUrl } from '../config/api';
 
 interface Message {
   id: string;
@@ -52,7 +53,7 @@ I'll search through available papers and provide answers with citations!`,
   const initializeConversation = async () => {
     try {
       console.log('🔗 Starting conversation...');
-      const response = await fetch('http://localhost:3002/api/conversations/start', {
+      const response = await fetch(getApiUrl('/conversations/start'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -100,7 +101,7 @@ I'll search through available papers and provide answers with citations!`,
     try {
       console.log('🔍 Sending chat request:', currentInput);
       
-      const response = await fetch('http://localhost:3002/api/chat', {
+      const response = await fetch(getApiUrl('/chat'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -146,8 +147,8 @@ I'll search through available papers and provide answers with citations!`,
         content: `❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}
 
 **Troubleshooting:**
-1. Make sure backend is running: \`npm run dev\` in backend folder
-2. Check if server is at http://localhost:3002
+1. Make sure backend is accessible
+2. Check if the API configuration is correct
 3. Try a simpler question
 4. Check browser console for details
 

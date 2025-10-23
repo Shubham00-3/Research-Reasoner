@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Download, CheckCircle, XCircle, Clock, FileText, HardDrive, Trash2 } from 'lucide-react';
+import { getApiUrl, getPaperDownloadUrl } from '../config/api';
 
 interface DownloadProgress {
   paperId: string;
@@ -58,7 +59,7 @@ const BulkDownloadManager: React.FC<BulkDownloadManagerProps> = ({
     try {
       console.log(`📥 Starting bulk download of ${papers.length} papers`);
       
-      const response = await fetch('http://localhost:3002/api/download-papers', {
+      const response = await fetch(getApiUrl('/download-papers'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -95,7 +96,7 @@ const BulkDownloadManager: React.FC<BulkDownloadManagerProps> = ({
   const pollDownloadProgress = async (sessionId: string) => {
     const pollInterval = setInterval(async () => {
       try {
-        const response = await fetch(`http://localhost:3002/api/download-progress/${sessionId}`);
+        const response = await fetch(`${getApiUrl('/download-progress')}/${sessionId}`);
         
         if (response.ok) {
           const progressData = await response.json();
@@ -256,7 +257,7 @@ const BulkDownloadManager: React.FC<BulkDownloadManagerProps> = ({
                   <div className="flex items-center space-x-2">
                     {item.status === 'completed' && item.filePath && (
                       <button
-                        onClick={() => window.open(`http://localhost:3002/api/download/paper/${item.paperId}`, '_blank')}
+                        onClick={() => window.open(getPaperDownloadUrl(item.paperId), '_blank')}
                         className="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-colors"
                         title="View Downloaded File"
                       >

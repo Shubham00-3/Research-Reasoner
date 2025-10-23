@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import { ZoomIn, ZoomOut, RotateCcw, Info, Users, Calendar, FileText, Quote, Tag, Building, CheckCircle, Download, BookOpen, Eye, Maximize } from 'lucide-react';
 import { ResultsData } from '../../types/research';
+import { getPaperContentUrl, getDownloadStatusUrl, getDownloadUrl } from '../../config/api';
 
 interface Paper {
   id: string;
@@ -79,7 +80,7 @@ const KnowledgeMapTab: React.FC<KnowledgeMapTabProps> = ({ data, topic = "resear
     try {
       console.log(`🔍 Fetching full content for paper: ${paperId}`);
       
-      const response = await fetch(`http://localhost:3002/api/paper-content/${paperId}`, {
+      const response = await fetch(getPaperContentUrl(paperId), {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -133,7 +134,7 @@ const KnowledgeMapTab: React.FC<KnowledgeMapTabProps> = ({ data, topic = "resear
   // 🎯 CHECK DOWNLOAD STATUS periodically
   const checkDownloadStatus = async () => {
     try {
-      const response = await fetch(`http://localhost:3002/api/download-status/${topic}`);
+      const response = await fetch(getDownloadStatusUrl(topic));
       if (response.ok) {
         const result = await response.json();
         setDownloadStatus({
@@ -373,7 +374,7 @@ const KnowledgeMapTab: React.FC<KnowledgeMapTabProps> = ({ data, topic = "resear
                   <button
                     onClick={() => {
                       if (paperContent.downloadUrl) {
-                        window.open(`http://localhost:3002${paperContent.downloadUrl}`, '_blank');
+                        window.open(getDownloadUrl(paperContent.downloadUrl), '_blank');
                       }
                     }}
                     className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"

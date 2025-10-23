@@ -5,8 +5,9 @@ import AnalysisProgress from '../components/AnalysisProgress';
 import ResultsTabs from '../components/ResultsTabs';
 import FloatingActionButton from '../components/FloatingActionButton';
 import { AnalysisState, ResultsData } from '../types/research';
+import API_CONFIG from '../config/api';
 
-const API_BASE_URL = 'http://localhost:3002/api';
+const API_BASE_URL = API_CONFIG.BASE_URL;
 
 const Index = () => {
   const [analysisState, setAnalysisState] = useState<AnalysisState>('idle');
