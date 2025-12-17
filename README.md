@@ -7,6 +7,11 @@ An advanced research paper discovery and analysis tool that combines knowledge g
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)
+![React](https://img.shields.io/badge/React-18-61DAFB.svg)
+![Neo4j](https://img.shields.io/badge/Neo4j-5.x-008CC1.svg)
+
+---
 
 ## ✨ Features
 
@@ -18,6 +23,173 @@ An advanced research paper discovery and analysis tool that combines knowledge g
 - 📊 **Research Analytics** - Citation networks, author collaboration, trend analysis
 - 🎓 **Auto-Generate Research Papers** - Create literature reviews from your database
 - 💾 **Neo4j Graph Database** - Persistent storage with vector embeddings
+
+---
+
+## 🏗️ System Architecture
+
+```mermaid
+flowchart TB
+    subgraph Client["🖥️ Frontend - React + Vite + TypeScript"]
+        UI["🔍 Search Interface"]
+        Chat["💬 Research Chat"]
+        Graph["🕸️ Knowledge Graph<br/>(D3.js Visualization)"]
+        Download["📥 Download Manager"]
+        Generator["📝 Paper Generator"]
+    end
+
+    subgraph Backend["⚙️ Backend - Node.js + Express + TypeScript"]
+        API["🔌 REST API Routes"]
+        subgraph Services["Core Services"]
+            PS["📚 Paper Search Service"]
+            RAG["🧠 Graph RAG Service"]
+            ARAG["🔬 Advanced RAG Service"]
+            DL["⬇️ Download Service"]
+            N4J["💾 Neo4j Service"]
+            GS["🤖 Groq Service"]
+        end
+    end
+
+    subgraph External["🌐 External APIs"]
+        SS["📖 Semantic Scholar API"]
+        AX["📄 arXiv API"]
+        GQ["⚡ Groq LLM API<br/>(Llama 3)"]
+    end
+
+    subgraph Database["💾 Neo4j Graph Database"]
+        Papers[("📑 Papers<br/>+ Embeddings")]
+        Authors[("👤 Authors")]
+        Topics[("🏷️ Topics")]
+        Relations[("🔗 Relationships")]
+    end
+
+    Client <--> API
+    API --> PS
+    API --> RAG
+    API --> ARAG
+    API --> DL
+    PS --> SS
+    PS --> AX
+    RAG --> GS --> GQ
+    ARAG --> GS
+    PS --> N4J
+    RAG --> N4J
+    ARAG --> N4J
+    DL --> N4J
+    N4J <--> Database
+```
+
+---
+
+## 🔄 Data Flow Pipelines
+
+### Paper Discovery Pipeline
+
+```mermaid
+flowchart LR
+    subgraph Input
+        Q[/"🔍 Search Query"/]
+    end
+
+    subgraph Discovery["Paper Discovery"]
+        SS["Semantic Scholar<br/>100+ papers"]
+        AX["arXiv<br/>500+ papers"]
+    end
+
+    subgraph Processing["Data Processing"]
+        M["🔀 Merge & Deduplicate"]
+        E["🧮 Generate Embeddings<br/>(TF-IDF + Semantic)"]
+    end
+
+    subgraph Storage["Neo4j Storage"]
+        N4J[("💾 Store Papers<br/>+ Vectors")]
+        KG["🕸️ Build Knowledge Graph"]
+    end
+
+    subgraph Output
+        VIZ[/"📊 Interactive<br/>Visualization"/]
+    end
+
+    Q --> SS & AX
+    SS --> M
+    AX --> M
+    M --> E --> N4J --> KG --> VIZ
+```
+
+### RAG (Retrieval Augmented Generation) Pipeline
+
+```mermaid
+flowchart TB
+    subgraph Input
+        Q[/"❓ User Question"/]
+    end
+
+    subgraph Analysis["Question Analysis"]
+        A["🔍 Analyze Question<br/>Extract entities, intent"]
+    end
+
+    subgraph Search["Hybrid Search"]
+        V["📊 Vector Search<br/>(Semantic similarity)"]
+        K["🔤 Keyword Search<br/>(BM25-style)"]
+        G["🕸️ Graph Traversal<br/>(Related papers)"]
+    end
+
+    subgraph Retrieval["Context Retrieval"]
+        C["🔀 Combine & Rank Results"]
+        P["📄 Extract Relevant Passages"]
+    end
+
+    subgraph Generation["LLM Generation"]
+        L["🤖 Groq LLM<br/>(Llama 3.3 70B)"]
+    end
+
+    subgraph Output
+        ANS[/"✅ Answer + Sources<br/>+ Follow-up Questions"/]
+    end
+
+    Q --> A
+    A --> V & K & G
+    V --> C
+    K --> C
+    G --> C
+    C --> P --> L --> ANS
+```
+
+### Multi-Step Research Investigation
+
+```mermaid
+flowchart TB
+    subgraph Input
+        Q[/"🔬 Complex Research Question"/]
+    end
+
+    subgraph Planning["Research Planning"]
+        P["📋 Decompose into<br/>sub-questions"]
+    end
+
+    subgraph Execution["Step-by-Step Execution"]
+        S1["Step 1: Foundation"]
+        S2["Step 2: Methods"]
+        S3["Step 3: Findings"]
+        S4["Step N: Analysis"]
+    end
+
+    subgraph Synthesis["Result Synthesis"]
+        SYN["🔄 Synthesize Findings"]
+        CON["📊 Draw Conclusions"]
+        GAP["🔍 Identify Gaps"]
+    end
+
+    subgraph Output
+        R[/"📝 Comprehensive Report<br/>+ All Sources"/]
+    end
+
+    Q --> P
+    P --> S1 --> S2 --> S3 --> S4
+    S4 --> SYN --> CON --> GAP --> R
+```
+
+---
 
 ## 🚀 Quick Start
 
@@ -51,6 +223,8 @@ Visit http://localhost:5173 and start exploring research!
 
 **📖 For detailed setup, see [QUICK_START.md](./QUICK_START.md)**
 
+---
+
 ## 🌐 Deployment
 
 Deploy to production in minutes:
@@ -62,47 +236,43 @@ Deploy to production in minutes:
 
 **📖 Full deployment guide: [DEPLOYMENT.md](./DEPLOYMENT.md)**
 
-## 🏗️ Architecture
+---
 
-### Tech Stack
-
-**Backend:**
-- Node.js + TypeScript + Express
-- Neo4j (Graph Database + Vector Search)
-- Groq (LLM Inference)
-- Semantic Scholar & arXiv APIs
-
-**Frontend:**
-- React 18 + TypeScript + Vite
-- TailwindCSS + shadcn/ui
-- D3.js (Graph Visualization)
-- React Query
-
-### Project Structure
+## 📁 Project Structure
 
 ```
 ResearchReasoner/
-├── frontend/                  # React frontend
+├── 📂 frontend/                    # React frontend application
 │   ├── src/
-│   │   ├── components/       # UI components
-│   │   ├── pages/           # Main pages
-│   │   └── types/           # TypeScript types
+│   │   ├── components/            # UI components
+│   │   │   ├── SearchInterface.tsx       # Paper search
+│   │   │   ├── EnhancedResearchChat.tsx  # AI chat interface
+│   │   │   ├── BulkDownloadManager.tsx   # PDF downloads
+│   │   │   └── ResearchPaperGenerator.tsx # Auto paper gen
+│   │   ├── pages/                 # Main pages
+│   │   └── types/                 # TypeScript types
 │   └── package.json
 │
-├── researchreasoner-backend/ # Node.js backend
+├── 📂 researchreasoner-backend/    # Node.js backend API
 │   ├── src/
-│   │   ├── routes/          # API routes
-│   │   ├── services/        # Core services
-│   │   │   ├── neo4jService.ts         # Database ops
-│   │   │   ├── graphRagService.ts      # RAG pipeline
-│   │   │   ├── advancedRAGService.ts   # Multi-step reasoning
-│   │   │   ├── paperSearchService.ts   # Paper discovery
-│   │   │   └── paperDownloadService.ts # PDF management
-│   │   └── index.ts
+│   │   ├── routes/                # API route handlers
+│   │   ├── services/              # Core business logic
+│   │   │   ├── neo4jService.ts           # Database operations
+│   │   │   ├── graphRagService.ts        # RAG pipeline
+│   │   │   ├── AdvancedRAGService.ts     # Multi-step reasoning
+│   │   │   ├── paperSearchService.ts     # Paper discovery
+│   │   │   ├── paperDownloadService.ts   # PDF management
+│   │   │   └── groqService.ts            # LLM integration
+│   │   └── index.ts               # Express server entry
 │   └── package.json
 │
-└── README.md
+├── 📄 README.md                    # This file
+├── 📄 QUICK_START.md              # Quick setup guide
+├── 📄 DEPLOYMENT.md               # Production deployment
+└── 📄 BACKEND_API_DOCUMENTATION.md # API reference
 ```
+
+---
 
 ## 🎯 Usage Examples
 
@@ -142,6 +312,8 @@ const results = await searchRealPapers("quantum computing");
 "Create a technical report on quantum algorithms"
 ```
 
+---
+
 ## 🔧 Configuration
 
 ### Backend Environment Variables
@@ -167,9 +339,21 @@ VITE_API_BASE_URL=http://localhost:3002/api
 
 See `.env.example` files for complete configuration options.
 
+---
+
 ## 📊 Key Features Explained
 
 ### Advanced RAG (Retrieval Augmented Generation)
+
+```mermaid
+flowchart LR
+    subgraph Features["RAG Features"]
+        HS["🔀 Hybrid Search<br/>Semantic + Keyword + Graph"]
+        MS["🔄 Multi-Step<br/>Complex reasoning"]
+        SA["📚 Source Attribution<br/>Paper citations"]
+        CM["💭 Conversation Memory<br/>Context awareness"]
+    end
+```
 
 - **Hybrid Search**: Combines semantic, keyword, and graph-based search
 - **Multi-Step Reasoning**: Breaks complex questions into research steps
@@ -190,31 +374,46 @@ See `.env.example` files for complete configuration options.
 - **Full-Text Search**: Query within paper content
 - **Batch Operations**: Download hundreds of papers at once
 
+---
+
 ## 🧪 API Documentation
 
 ### Main Endpoints
 
-```bash
-# Search for papers
-POST /api/search-papers
-Body: { "query": "machine learning" }
-
-# Build knowledge graph
-POST /api/build-knowledge-graph
-Body: { "papers": [...], "topic": "ML" }
-
-# Chat with research assistant
-POST /api/chat
-Body: { "question": "What is...", "mode": "simple" }
-
-# Multi-step investigation
-POST /api/chat-advanced
-Body: { "question": "Complex query...", "mode": "investigation" }
-
-# Download papers
-POST /api/download-papers
-Body: { "papers": [...], "topic": "ML" }
+```mermaid
+flowchart LR
+    subgraph Endpoints["API Endpoints"]
+        SP["POST /api/search-papers"]
+        BK["POST /api/build-knowledge-graph"]
+        CH["POST /api/chat"]
+        CA["POST /api/chat-advanced"]
+        DL["POST /api/download-papers"]
+    end
 ```
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/search-papers` | POST | Search for papers on a topic |
+| `/api/build-knowledge-graph` | POST | Build and store knowledge graph |
+| `/api/chat` | POST | Simple RAG Q&A |
+| `/api/chat-advanced` | POST | Multi-step investigation |
+| `/api/download-papers` | POST | Bulk PDF download |
+
+**📖 Full API docs: [BACKEND_API_DOCUMENTATION.md](./BACKEND_API_DOCUMENTATION.md)**
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | React 18, TypeScript, Vite, TailwindCSS, shadcn/ui, D3.js |
+| **Backend** | Node.js, Express, TypeScript |
+| **Database** | Neo4j (Graph + Vector Search) |
+| **LLM** | Groq (Llama 3.3 70B) |
+| **APIs** | Semantic Scholar, arXiv |
+
+---
 
 ## 🤝 Contributing
 
@@ -226,15 +425,21 @@ Contributions are welcome! Please:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
+---
+
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
 
 ## 🙏 Acknowledgments
 
 - Built for research enthusiasts and academics
 - Powered by Neo4j, Groq, and amazing open-source tools
 - Inspired by Connected Papers and research discovery tools
+
+---
 
 ## 📞 Support
 
