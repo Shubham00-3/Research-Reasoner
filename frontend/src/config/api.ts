@@ -3,8 +3,8 @@
  * Centralized API endpoint management
  */
 
-// Get the API base URL from environment or use fallback
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://researchreasoner-backend-production.up.railway.app/api';
+// Production deployments must set VITE_API_BASE_URL explicitly.
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? 'http://localhost:3002/api' : '/api');
 const API_SERVER_URL = API_BASE_URL.replace(/\/api$/, ''); // Server URL without /api
 
 export const API_CONFIG = {
@@ -54,4 +54,3 @@ export const getPaperDownloadUrl = (paperId: string) => {
 };
 
 export default API_CONFIG;
-

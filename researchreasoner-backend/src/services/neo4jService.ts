@@ -59,6 +59,11 @@ class Neo4jService {
       const username = process.env.NEO4J_USERNAME || 'neo4j';
       const password = process.env.NEO4J_PASSWORD || 'password123';
 
+      // Debug log to verify env variables (do not print full password)
+      console.log(
+        `🔧 Neo4j config → uri: ${uri}, user: ${username}, passLen: ${password ? password.length : 0}`
+      );
+
       // Configure encryption based on URI scheme
       const isSecureUri = uri.includes('+s://') || uri.includes('neo4j+s://') || uri.includes('bolt+s://');
       const config: any = {

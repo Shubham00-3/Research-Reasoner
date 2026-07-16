@@ -3,6 +3,10 @@ frontend/node_modules/
 researchreasoner-backend/node_modules/
 researchreasoner-backend/downloads/*
 
+# Local Neo4j dumps/backups (too large for GitHub)
+researchreasoner-backend/neo4j-backup/
+*.dump
+
 
 # Environment variables
 .env

@@ -1,5 +1,23 @@
 import OpenAI from 'openai';
 
+// Default Groq model (updated to avoid decommissioned models)
+const DEFAULT_GROQ_MODEL = "llama-3.1-8b-instant";
+
+// Function to get the model to use
+function getGroqModel(): string {
+  const model = process.env.GROQ_MODEL || DEFAULT_GROQ_MODEL;
+  
+  // Check for known decommissioned models
+  const decommissionedModels = ['llama3-8b-8192', 'llama-3-8b-8192'];
+  if (decommissionedModels.includes(model)) {
+    console.warn(`⚠️  WARNING: Model "${model}" has been decommissioned. Using default model "${DEFAULT_GROQ_MODEL}" instead.`);
+    console.warn(`   Please update your GROQ_MODEL environment variable to a supported model.`);
+    return DEFAULT_GROQ_MODEL;
+  }
+  
+  return model;
+}
+
 // Function to get Groq client (lazy initialization)
 function getGroqClient() {
   if (!process.env.GROQ_API_KEY) {
@@ -51,8 +69,11 @@ export async function searchPapersWithGroq(topic: string) {
 
     Return only the JSON object, nothing else.`;
 
+    const model = getGroqModel();
+    console.log(`📌 Using Groq model: ${model}`);
+    
     const response = await groq.chat.completions.create({
-      model: "llama3-8b-8192",
+      model: model,
       messages: [{ role: "user", content: prompt }],
       temperature: 0.3, // Lower temperature for more consistent JSON
       max_tokens: 1000
@@ -66,7 +87,21 @@ export async function searchPapersWithGroq(topic: string) {
     console.log(`✅ Groq analyzed ${topic}`);
     return analysis;
     
-  } catch (error) {
+  } catch (error: any) {
+    // Check for model decommission errors
+    const errorMessage = error?.message || error?.response?.data?.message || '';
+    const statusCode = error?.status || error?.response?.status || error?.statusCode;
+    
+    if (errorMessage.toLowerCase().includes('decommissioned') || 
+        errorMessage.toLowerCase().includes('no longer supported') ||
+        (statusCode === 400 && errorMessage.toLowerCase().includes('model'))) {
+      const currentModel = process.env.GROQ_MODEL || DEFAULT_GROQ_MODEL;
+      console.error(`❌ Groq API error: Model "${currentModel}" may be decommissioned or invalid.`);
+      console.error(`   Error details: ${errorMessage}`);
+      console.error(`   Please update GROQ_MODEL environment variable to a supported model.`);
+      console.error(`   Recommended models: llama-3.1-8b-instant, llama-3.1-70b-versatile, llama-3.3-70b-versatile`);
+      throw new Error(`Groq model error: Model may be decommissioned. Please update GROQ_MODEL environment variable.`);
+    }
     console.error('❌ Groq API error:', error);
     throw error;
   }
@@ -84,8 +119,10 @@ export async function generateInsightsWithGroq(prompt: string) {
 
     Return only the JSON object with the exact structure requested, nothing else.`;
 
+    const model = getGroqModel();
+    
     const response = await groq.chat.completions.create({
-      model: "llama3-8b-8192",
+      model: model,
       messages: [{ role: "user", content: enhancedPrompt }],
       temperature: 0.3, // Lower temperature for more consistent JSON
       max_tokens: 1500
@@ -98,7 +135,20 @@ export async function generateInsightsWithGroq(prompt: string) {
     console.log('✅ Groq insights generated successfully');
     return insights;
     
-  } catch (error) {
+  } catch (error: any) {
+    // Check for model decommission errors
+    const errorMessage = error?.message || error?.response?.data?.message || '';
+    const statusCode = error?.status || error?.response?.status || error?.statusCode;
+    
+    if (errorMessage.toLowerCase().includes('decommissioned') || 
+        errorMessage.toLowerCase().includes('no longer supported') ||
+        (statusCode === 400 && errorMessage.toLowerCase().includes('model'))) {
+      const currentModel = process.env.GROQ_MODEL || DEFAULT_GROQ_MODEL;
+      console.error(`❌ Groq API error: Model "${currentModel}" may be decommissioned or invalid.`);
+      console.error(`   Error details: ${errorMessage}`);
+      console.error(`   Please update GROQ_MODEL environment variable to a supported model.`);
+      throw new Error(`Groq model error: Model may be decommissioned. Please update GROQ_MODEL environment variable.`);
+    }
     console.error('❌ Groq insights error:', error);
     throw error;
   }
@@ -108,9 +158,10 @@ class GroqService {
   async generateCompletion(prompt: string, options: { maxTokens: number; temperature: number }): Promise<string> {
     try {
       const groq = getGroqClient();
+      const model = getGroqModel();
       
       const response = await groq.chat.completions.create({
-        model: "llama3-8b-8192",
+        model: model,
         messages: [{ role: "user", content: prompt }],
         temperature: options.temperature,
         max_tokens: options.maxTokens
@@ -120,7 +171,20 @@ class GroqService {
       if (!content) throw new Error('No response from Groq');
       
       return content;
-    } catch (error) {
+    } catch (error: any) {
+      // Check for model decommission errors
+      const errorMessage = error?.message || error?.response?.data?.message || '';
+      const statusCode = error?.status || error?.response?.status || error?.statusCode;
+      
+      if (errorMessage.toLowerCase().includes('decommissioned') || 
+          errorMessage.toLowerCase().includes('no longer supported') ||
+          (statusCode === 400 && errorMessage.toLowerCase().includes('model'))) {
+        const currentModel = process.env.GROQ_MODEL || DEFAULT_GROQ_MODEL;
+        console.error(`❌ Groq API error: Model "${currentModel}" may be decommissioned or invalid.`);
+        console.error(`   Error details: ${errorMessage}`);
+        console.error(`   Please update GROQ_MODEL environment variable to a supported model.`);
+        throw new Error(`Groq model error: Model may be decommissioned. Please update GROQ_MODEL environment variable.`);
+      }
       console.error('❌ Groq completion error:', error);
       throw error;
     }
@@ -129,9 +193,10 @@ class GroqService {
   async generateResponse(prompt: string): Promise<string> {
     try {
       const groq = getGroqClient();
+      const model = getGroqModel();
       
       const response = await groq.chat.completions.create({
-        model: "llama3-8b-8192",
+        model: model,
         messages: [{ role: "user", content: prompt }],
         temperature: 0.7,
         max_tokens: 1000
@@ -141,7 +206,20 @@ class GroqService {
       if (!content) throw new Error('No response from Groq');
       
       return content;
-    } catch (error) {
+    } catch (error: any) {
+      // Check for model decommission errors
+      const errorMessage = error?.message || error?.response?.data?.message || '';
+      const statusCode = error?.status || error?.response?.status || error?.statusCode;
+      
+      if (errorMessage.toLowerCase().includes('decommissioned') || 
+          errorMessage.toLowerCase().includes('no longer supported') ||
+          (statusCode === 400 && errorMessage.toLowerCase().includes('model'))) {
+        const currentModel = process.env.GROQ_MODEL || DEFAULT_GROQ_MODEL;
+        console.error(`❌ Groq API error: Model "${currentModel}" may be decommissioned or invalid.`);
+        console.error(`   Error details: ${errorMessage}`);
+        console.error(`   Please update GROQ_MODEL environment variable to a supported model.`);
+        throw new Error(`Groq model error: Model may be decommissioned. Please update GROQ_MODEL environment variable.`);
+      }
       console.error('❌ Groq response error:', error);
       throw error;
     }

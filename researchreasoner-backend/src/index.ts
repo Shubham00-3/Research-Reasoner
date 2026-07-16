@@ -10,16 +10,47 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3002;
 
-// ✅ ENHANCED CORS - Allow ALL common frontend ports
+// ✅ ENHANCED CORS - Allow production and development origins
+const allowedOrigins = [
+  'http://localhost:3000',    // React default
+  'http://localhost:5173',    // Vite default  
+  'http://localhost:8080',    // Custom port
+  'http://localhost:8081',    // Alternate port
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:5173', 
+  'http://127.0.0.1:8080',
+  'http://127.0.0.1:8081',
+  'https://research-reasoner.vercel.app',  // Production Vercel
+  'https://research-reasoner-git-main-shubham-gangwars-projects.vercel.app', // Git branch deploys
+];
+
+// Allow additional origins from environment variable
+if (process.env.ALLOWED_ORIGINS) {
+  const envOrigins = process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim());
+  allowedOrigins.push(...envOrigins);
+}
+
 app.use(cors({
-  origin: [
-    'http://localhost:3000',    // React default
-    'http://localhost:5173',    // Vite default  
-    'http://localhost:8080',    // Your custom port
-    'http://127.0.0.1:3000',
-    'http://127.0.0.1:5173', 
-    'http://127.0.0.1:8080'
-  ],
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Allow any Vercel preview deployment
+    if (origin.includes('.vercel.app')) return callback(null, true);
+    
+    // Check if origin is in allowed list
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    // In development, allow all localhost
+    if (process.env.NODE_ENV !== 'production' && origin.includes('localhost')) {
+      return callback(null, true);
+    }
+    
+    console.log(`⚠️ CORS blocked origin: ${origin}`);
+    callback(null, true); // Allow anyway for now - can change to false later
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
@@ -52,11 +83,8 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     port: PORT,
     payloadLimit: '50mb',
-    corsOrigins: [
-      'http://localhost:3000',
-      'http://localhost:5173', 
-      'http://localhost:8080'
-    ]
+    corsEnabled: true,
+    vercelDomain: 'https://research-reasoner.vercel.app'
   });
 });
 

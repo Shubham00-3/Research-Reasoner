@@ -137,6 +137,19 @@ const searchCache = new InstantCache();
 const paperContentCache = new InstantCache();
 const graphCache = new InstantCache();
 
+// ✅ CONVERSATION MEMORY SYSTEM (moved to top to fix reference error)
+interface ConversationSession {
+  id: string;
+  userId?: string;
+  topic?: string;
+  messages: any[];
+  createdAt: Date;
+  lastActive: Date;
+  context: any;
+}
+
+const conversationStore = new Map<string, ConversationSession>();
+
 // Helper function to optimize papers for frontend
 function optimizePapersForFrontend(papers: any[]): any[] {
   return papers.map((paper, index) => ({
@@ -1599,18 +1612,7 @@ router.post('/export-database-content', async (req: any, res: any) => {
   }
 });
 
-// ✅ CONVERSATION MEMORY SYSTEM
-interface ConversationSession {
-  id: string;
-  userId?: string;
-  topic?: string;
-  messages: any[];
-  createdAt: Date;
-  lastActive: Date;
-  context: any;
-}
-
-const conversationStore = new Map<string, ConversationSession>();
+// ✅ CONVERSATION MEMORY SYSTEM (moved to top - see line 140-151)
 
 async function getPaperYearDistribution(topic?: string): Promise<any[]> {
   console.log(`Analytics: Getting paper year distribution for topic: ${topic || 'all'}`);
