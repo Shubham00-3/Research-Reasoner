@@ -58,18 +58,18 @@ const InsightsTab: React.FC<InsightsTabProps> = ({ data }) => {
   const topicTags = getTopicTags();
 
   return (
-    <div className="p-8">
-      <div className="mb-6">
-        <h3 className="text-2xl font-semibold text-gray-800 mb-2">
+    <div className="p-4 sm:p-6 md:p-8">
+      <div className="mb-4 sm:mb-6">
+        <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">
           AI-Generated Research Insights
         </h3>
-        <p className="text-gray-600">
+        <p className="text-sm sm:text-base text-gray-600">
           Deep analysis of {data.insights.reduce((sum, insight) => sum + insight.sources, 0)} sources 
           across {data.insights.length} key categories
         </p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {data.insights.map((insight, index) => {
           const isExpanded = expandedInsights.has(index);
           
@@ -80,44 +80,44 @@ const InsightsTab: React.FC<InsightsTabProps> = ({ data }) => {
             >
               <button
                 onClick={() => toggleInsight(index)}
-                className="w-full p-6 text-left hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset"
+                className="w-full p-4 sm:p-6 text-left hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset min-h-[64px]"
               >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="text-lg font-semibold text-gray-800 mb-1">
+                <div className="flex items-start sm:items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <h4 className="text-base sm:text-lg font-semibold text-gray-800 mb-1 break-words">
                       {insight.category}
                     </h4>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm text-blue-600 font-medium">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <span className="text-xs sm:text-sm text-blue-600 font-medium">
                         {insight.sources} sources analyzed
                       </span>
-                      <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
-                      <span className="text-sm text-gray-500">
-                        Click to {isExpanded ? 'collapse' : 'expand'}
+                      <span className="w-1 h-1 bg-gray-400 rounded-full hidden sm:inline-block"></span>
+                      <span className="text-xs sm:text-sm text-gray-500">
+                        Tap to {isExpanded ? 'collapse' : 'expand'}
                       </span>
                     </div>
                   </div>
-                  <div className="text-gray-400">
+                  <div className="text-gray-400 shrink-0 mt-0.5">
                     {isExpanded ? <ArrowUp size={20} /> : <ArrowDown size={20} />}
                   </div>
                 </div>
               </button>
 
               {isExpanded && (
-                <div className="px-6 pb-6 animate-fade-in">
+                <div className="px-4 sm:px-6 pb-4 sm:pb-6 animate-fade-in">
                   <div className="border-t border-gray-100 pt-4">
-                    <p className="text-gray-700 leading-relaxed">
+                    <p className="text-sm sm:text-base text-gray-700 leading-relaxed break-words">
                       {insight.content}
                     </p>
                     
                     {/* Real research papers from your data */}
-                    <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-                      <h5 className="font-medium text-blue-800 mb-2">
+                    <div className="mt-4 p-3 sm:p-4 bg-blue-50 rounded-lg">
+                      <h5 className="font-medium text-blue-800 mb-2 text-sm sm:text-base">
                         Key Research Papers
                       </h5>
-                      <ul className="text-sm text-blue-700 space-y-1">
+                      <ul className="text-xs sm:text-sm text-blue-700 space-y-1.5">
                         {realPapers.map((paper, paperIndex) => (
-                          <li key={paperIndex}>
+                          <li key={paperIndex} className="break-words">
                             • "{paper.title}" ({paper.venue}, {paper.year})
                           </li>
                         ))}
@@ -143,26 +143,26 @@ const InsightsTab: React.FC<InsightsTabProps> = ({ data }) => {
       </div>
 
       {/* Summary Statistics */}
-      <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
-        <h4 className="font-semibold text-gray-800 mb-3">Analysis Summary</h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-          <div>
-            <div className="text-2xl font-bold text-blue-600">
+      <div className="mt-6 sm:mt-8 p-4 sm:p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
+        <h4 className="font-semibold text-gray-800 mb-3 text-sm sm:text-base">Analysis Summary</h4>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-center">
+          <div className="bg-white/50 rounded-lg p-3 sm:p-0 sm:bg-transparent">
+            <div className="text-xl sm:text-2xl font-bold text-blue-600">
               {data.insights.reduce((sum, insight) => sum + insight.sources, 0)}
             </div>
-            <div className="text-sm text-gray-600">Total Sources</div>
+            <div className="text-xs sm:text-sm text-gray-600">Total Sources</div>
           </div>
-          <div>
-            <div className="text-2xl font-bold text-green-600">
+          <div className="bg-white/50 rounded-lg p-3 sm:p-0 sm:bg-transparent">
+            <div className="text-xl sm:text-2xl font-bold text-green-600">
               {data.insights.length}
             </div>
-            <div className="text-sm text-gray-600">Research Categories</div>
+            <div className="text-xs sm:text-sm text-gray-600">Research Categories</div>
           </div>
-          <div>
-            <div className="text-2xl font-bold text-purple-600">
+          <div className="bg-white/50 rounded-lg p-3 sm:p-0 sm:bg-transparent">
+            <div className="text-xl sm:text-2xl font-bold text-purple-600">
               {data.papersFound}
             </div>
-            <div className="text-sm text-gray-600">Papers Analyzed</div>
+            <div className="text-xs sm:text-sm text-gray-600">Papers Analyzed</div>
           </div>
         </div>
       </div>

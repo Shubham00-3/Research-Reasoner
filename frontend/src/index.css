@@ -90,32 +90,93 @@
     @apply border-border;
   }
 
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  html,
+  body,
+  #root {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
   body {
     @apply bg-background text-foreground font-inter;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    min-height: 100dvh;
   }
 
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
+  /* Prevent iOS zoom on form focus (font-size >= 16px on small inputs handled in components) */
+  input,
+  textarea,
+  select {
+    font-size: 16px;
   }
 
-  ::-webkit-scrollbar-track {
-    background: #f1f5f9;
+  @media (min-width: 640px) {
+    input,
+    textarea,
+    select {
+      font-size: inherit;
+    }
   }
 
-  ::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 3px;
-  }
+  /* Custom scrollbar (desktop only feel) */
+  @media (pointer: fine) {
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
   }
 }
 
 @layer utilities {
   .font-inter {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Safe area for notched phones */
+  .safe-pb {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+
+  .safe-pt {
+    padding-top: max(0px, env(safe-area-inset-top));
+  }
+
+  .app-container {
+    @apply w-full max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8;
+  }
+
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  /* Truncate long unbroken strings without breaking layout */
+  .break-anywhere {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+}
+
+/* Landscape phones: slightly tighter vertical spacing */
+@media (max-height: 500px) and (orientation: landscape) {
+  .min-h-\[100dvh\] {
+    min-height: 100vh;
   }
 }

@@ -349,50 +349,50 @@ ${currentPaper.references.map((ref, index) => `[${index + 1}] ${ref}`).join('\n'
   }
 
   return (
-    <div className="h-full flex bg-gray-50">
-      {/* Left Side - Chat Agent (40%) */}
-      <div className="w-2/5 bg-white border-r border-gray-200 flex flex-col">
+    <div className="h-full flex flex-col lg:flex-row bg-gray-50 min-h-[50vh]">
+      {/* Left Side - Chat Agent */}
+      <div className="w-full lg:w-2/5 bg-white border-b lg:border-b-0 lg:border-r border-gray-200 flex flex-col max-h-[50vh] lg:max-h-none min-h-[280px] lg:min-h-[520px]">
         {/* Chat Header */}
-        <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-4 border-b border-gray-200">
+        <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-3 sm:p-4 border-b border-gray-200">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
-              <Brain className="w-6 h-6 text-white" />
+            <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center shrink-0">
+              <Brain className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <div>
-              <h3 className="font-semibold text-gray-800">Research Paper Generator</h3>
-              <p className="text-sm text-gray-600">AI-powered academic writing assistant</p>
+            <div className="min-w-0">
+              <h3 className="font-semibold text-gray-800 text-sm sm:text-base truncate">Research Paper Generator</h3>
+              <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">AI-powered academic writing assistant</p>
             </div>
           </div>
         </div>
 
         {/* Chat Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ maxHeight: 'calc(100vh - 200px)' }}>
+        <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-4 overscroll-contain min-h-0">
           {messages.map((message) => (
             <div
               key={message.id}
               className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
             >
-              <div className={`flex items-start space-x-3 max-w-4xl ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+              <div className={`flex items-start gap-2 sm:space-x-3 max-w-[95%] sm:max-w-4xl ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
                 {/* Avatar */}
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                   message.type === 'user' 
                     ? 'bg-blue-600' 
                     : 'bg-purple-600'
                 }`}>
                   {message.type === 'user' ? (
-                    <User className="w-4 h-4 text-white" />
+                    <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                   ) : (
-                    <Bot className="w-4 h-4 text-white" />
+                    <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
                   )}
                 </div>
 
                 {/* Message Content */}
-                <div className={`rounded-lg p-3 max-w-sm ${
+                <div className={`rounded-lg p-2.5 sm:p-3 max-w-[min(100%,20rem)] sm:max-w-sm min-w-0 ${
                   message.type === 'user'
                     ? 'bg-blue-600 text-white'
                     : 'bg-gray-100 text-gray-800'
                 }`}>
-                  <div className="text-sm leading-relaxed whitespace-pre-wrap">
+                  <div className="text-sm leading-relaxed whitespace-pre-wrap break-words">
                     {message.content.includes('**') ? (
                       <div dangerouslySetInnerHTML={{ 
                         __html: message.content
@@ -432,15 +432,15 @@ ${currentPaper.references.map((ref, index) => `[${index + 1}] ${ref}`).join('\n'
         </div>
 
         {/* Chat Input */}
-        <div className="p-4 border-t border-gray-200 bg-white">
-          <div className="flex items-end space-x-3">
-            <div className="flex-1">
+        <div className="p-3 sm:p-4 border-t border-gray-200 bg-white safe-pb">
+          <div className="flex flex-col sm:flex-row sm:items-end gap-2 sm:gap-3">
+            <div className="flex-1 min-w-0">
               <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Tell me what kind of paper to generate or how to modify it..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none text-sm"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none text-base sm:text-sm"
                 rows={2}
                 disabled={isLoading}
               />
@@ -448,41 +448,43 @@ ${currentPaper.references.map((ref, index) => `[${index + 1}] ${ref}`).join('\n'
             <button
               onClick={handleSend}
               disabled={!input.trim() || isLoading}
-              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px] flex items-center justify-center shrink-0"
+              aria-label="Send"
             >
               <Send className="w-4 h-4" />
+              <span className="ml-2 sm:hidden text-sm font-medium">Send</span>
             </button>
           </div>
-          <div className="mt-2 text-xs text-gray-500">
+          <div className="mt-2 text-[10px] sm:text-xs text-gray-500 hidden sm:block">
             Press Enter to send, Shift+Enter for new line
           </div>
         </div>
       </div>
 
-      {/* Right Side - Paper Preview (60%) */}
-      <div className="w-3/5 flex flex-col">
+      {/* Right Side - Paper Preview */}
+      <div className="w-full lg:w-3/5 flex flex-col min-h-[40vh] lg:min-h-[520px] min-w-0">
         {/* Preview Header */}
-        <div className="bg-white p-4 border-b border-gray-200 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <FileText className="w-5 h-5 text-gray-600" />
-            <div>
-              <h3 className="font-semibold text-gray-800">
+        <div className="bg-white p-3 sm:p-4 border-b border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-start sm:items-center gap-2 sm:space-x-3 min-w-0">
+            <FileText className="w-5 h-5 text-gray-600 shrink-0 mt-0.5 sm:mt-0" />
+            <div className="min-w-0">
+              <h3 className="font-semibold text-gray-800 text-sm sm:text-base truncate" title={currentPaper ? currentPaper.title : 'Paper Preview'}>
                 {currentPaper ? currentPaper.title : 'Paper Preview'}
               </h3>
               {currentPaper && (
-                <p className="text-sm text-gray-600">
-                  {currentPaper.metadata.wordCount} words • Version {currentPaper.metadata.version} • 
-                  Last updated {currentPaper.metadata.lastUpdated.toLocaleDateString()}
+                <p className="text-xs sm:text-sm text-gray-600 break-words">
+                  {currentPaper.metadata.wordCount} words · v{currentPaper.metadata.version} ·{' '}
+                  {currentPaper.metadata.lastUpdated.toLocaleDateString()}
                 </p>
               )}
             </div>
           </div>
           
           {currentPaper && (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={downloadPaper}
-                className="flex items-center space-x-2 px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm"
+                className="flex items-center justify-center gap-2 px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm min-h-[44px] w-full sm:w-auto"
               >
                 <Download className="w-4 h-4" />
                 <span>Download</span>
@@ -492,19 +494,19 @@ ${currentPaper.references.map((ref, index) => `[${index + 1}] ${ref}`).join('\n'
         </div>
 
         {/* Paper Content or Empty State */}
-        <div className="flex-1 overflow-y-auto bg-white">
+        <div className="flex-1 overflow-y-auto bg-white overscroll-contain min-h-0">
           {currentPaper ? (
-            <div ref={previewRef} className="max-w-4xl mx-auto p-8">
+            <div ref={previewRef} className="max-w-4xl mx-auto p-4 sm:p-6 md:p-8">
               {/* Table of Contents */}
-              <div className="bg-gray-50 rounded-lg p-4 mb-8 border">
-                <h4 className="font-semibold text-gray-800 mb-3 flex items-center">
-                  <BookOpen className="w-4 h-4 mr-2" />
+              <div className="bg-gray-50 rounded-lg p-3 sm:p-4 mb-6 sm:mb-8 border">
+                <h4 className="font-semibold text-gray-800 mb-3 flex items-center text-sm sm:text-base">
+                  <BookOpen className="w-4 h-4 mr-2 shrink-0" />
                   Table of Contents
                 </h4>
                 <div className="space-y-1">
                   <button
                     onClick={() => scrollToSection('abstract')}
-                    className="block text-left text-sm text-blue-600 hover:text-blue-800 hover:underline"
+                    className="block text-left text-sm text-blue-600 hover:text-blue-800 hover:underline min-h-[36px] py-1"
                   >
                     Abstract
                   </button>
@@ -512,14 +514,14 @@ ${currentPaper.references.map((ref, index) => `[${index + 1}] ${ref}`).join('\n'
                     <button
                       key={section.id}
                       onClick={() => scrollToSection(section.id)}
-                      className="block text-left text-sm text-blue-600 hover:text-blue-800 hover:underline"
+                      className="block text-left text-sm text-blue-600 hover:text-blue-800 hover:underline min-h-[36px] py-1 break-words"
                     >
                       {section.title}
                     </button>
                   ))}
                   <button
                     onClick={() => scrollToSection('references')}
-                    className="block text-left text-sm text-blue-600 hover:text-blue-800 hover:underline"
+                    className="block text-left text-sm text-blue-600 hover:text-blue-800 hover:underline min-h-[36px] py-1"
                   >
                     References
                   </button>
@@ -527,31 +529,31 @@ ${currentPaper.references.map((ref, index) => `[${index + 1}] ${ref}`).join('\n'
               </div>
 
               {/* Paper Title */}
-              <h1 className="text-3xl font-bold text-gray-900 mb-6 leading-tight">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight break-words">
                 {currentPaper.title}
               </h1>
 
               {/* Abstract */}
-              <div id="section-abstract" className="mb-8">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-gray-200 pb-2">
+              <div id="section-abstract" className="mb-6 sm:mb-8">
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3 sm:mb-4 border-b-2 border-gray-200 pb-2">
                   Abstract
                 </h2>
-                <p className="text-gray-700 leading-relaxed bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                <p className="text-sm sm:text-base text-gray-700 leading-relaxed bg-blue-50 p-3 sm:p-4 rounded-lg border-l-4 border-blue-500 break-words">
                   {currentPaper.abstract}
                 </p>
               </div>
 
               {/* Sections */}
               {currentPaper.sections.map((section) => (
-                <div key={section.id} id={`section-${section.id}`} className="mb-8">
-                  <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-gray-200 pb-2">
+                <div key={section.id} id={`section-${section.id}`} className="mb-6 sm:mb-8">
+                  <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3 sm:mb-4 border-b-2 border-gray-200 pb-2 break-words">
                     {section.title}
                   </h2>
-                  <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                  <div className="text-sm sm:text-base text-gray-700 leading-relaxed whitespace-pre-wrap break-words">
                     {section.content.split('\n').map((paragraph, index) => {
                       if (paragraph.startsWith('### ')) {
                         return (
-                          <h3 key={index} className="text-lg font-medium text-gray-800 mt-6 mb-3">
+                          <h3 key={index} className="text-base sm:text-lg font-medium text-gray-800 mt-6 mb-3">
                             {paragraph.replace('### ', '')}
                           </h3>
                         );
@@ -581,13 +583,13 @@ ${currentPaper.references.map((ref, index) => `[${index + 1}] ${ref}`).join('\n'
               ))}
 
               {/* References */}
-              <div id="section-references" className="mb-8">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-gray-200 pb-2">
+              <div id="section-references" className="mb-6 sm:mb-8">
+                <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3 sm:mb-4 border-b-2 border-gray-200 pb-2">
                   References
                 </h2>
                 <div className="space-y-2">
                   {currentPaper.references.map((reference, index) => (
-                    <p key={index} className="text-sm text-gray-600 pl-4 border-l-2 border-gray-200">
+                    <p key={index} className="text-xs sm:text-sm text-gray-600 pl-3 sm:pl-4 border-l-2 border-gray-200 break-words">
                       [{index + 1}] {reference}
                     </p>
                   ))}
@@ -595,29 +597,28 @@ ${currentPaper.references.map((ref, index) => `[${index + 1}] ${ref}`).join('\n'
               </div>
 
               {/* Footer */}
-              <div className="border-t border-gray-200 pt-6 mt-8 text-center text-gray-500 text-sm">
+              <div className="border-t border-gray-200 pt-4 sm:pt-6 mt-6 sm:mt-8 text-center text-gray-500 text-xs sm:text-sm">
                 <p>Generated by ResearchReasoner AI Paper Generator</p>
-                <p>Word Count: {currentPaper.metadata.wordCount} • Version: {currentPaper.metadata.version}</p>
+                <p className="break-words">Word Count: {currentPaper.metadata.wordCount} · Version: {currentPaper.metadata.version}</p>
                 <p>Last Updated: {currentPaper.metadata.lastUpdated.toLocaleDateString()}</p>
               </div>
             </div>
           ) : (
             // Empty State
-            <div className="h-full flex items-center justify-center">
-              <div className="text-center max-w-md">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FileText className="w-8 h-8 text-gray-400" />
+            <div className="h-full flex items-center justify-center p-4 sm:p-6 min-h-[200px]">
+              <div className="text-center max-w-md px-2">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FileText className="w-7 h-7 sm:w-8 sm:h-8 text-gray-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2">
                   No Paper Generated Yet
                 </h3>
-                <p className="text-gray-600 mb-6">
-                  Chat with the AI assistant on the left to generate your research paper. 
-                  You can create new papers or modify existing ones in real-time.
+                <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
+                  Chat with the AI assistant above (or on the left on large screens) to generate your research paper.
                 </p>
-                <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                  <h4 className="font-medium text-blue-800 mb-2">💡 Try asking:</h4>
-                  <div className="text-sm text-blue-700 space-y-1">
+                <div className="bg-blue-50 rounded-lg p-3 sm:p-4 border border-blue-200 text-left">
+                  <h4 className="font-medium text-blue-800 mb-2 text-sm sm:text-base">💡 Try asking:</h4>
+                  <div className="text-xs sm:text-sm text-blue-700 space-y-1 break-words">
                     <div>• "Generate a survey paper on machine learning"</div>
                     <div>• "Create a technical report on neural networks"</div>
                     <div>• "Write a research paper about quantum computing"</div>

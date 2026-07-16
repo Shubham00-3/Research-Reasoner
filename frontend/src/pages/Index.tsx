@@ -209,38 +209,44 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-blue-50/30">
+    <div className="min-h-[100dvh] bg-gradient-to-br from-white via-gray-50 to-blue-50/30 overflow-x-hidden">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-sm border-b border-gray-100">
-        <div className="px-6 py-4">
-          <button 
+      <header className="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-sm border-b border-gray-100 safe-pt">
+        <div className="app-container py-3 sm:py-4 flex items-center justify-between gap-3">
+          <button
             onClick={resetSearch}
-            className="flex items-center space-x-2 text-gray-800 hover:text-blue-600 transition-colors group"
+            className="flex items-center space-x-2 text-gray-800 hover:text-blue-600 transition-colors group min-h-[44px]"
           >
-            <span className="text-xl">🧠</span>
-            <span className="font-semibold text-lg group-hover:text-blue-600 transition-colors">
+            <span className="text-lg sm:text-xl">🧠</span>
+            <span className="font-semibold text-base sm:text-lg group-hover:text-blue-600 transition-colors">
               ResearchReasoner
             </span>
-            {/* <span className="ml-2 px-2 py-1 text-xs bg-blue-100 text-blue-600 rounded-full">
-              Perplexity Hackathon
-            </span> */}
           </button>
+          {analysisState === 'complete' && (
+            <button
+              onClick={resetSearch}
+              className="text-sm text-gray-500 hover:text-blue-600 min-h-[44px] px-2 shrink-0"
+            >
+              New search
+            </button>
+          )}
         </div>
       </header>
 
       {/* Error Banner */}
       {error && (
-        <div className="fixed top-16 left-0 right-0 z-30 bg-yellow-50 border-b border-yellow-200 px-6 py-2">
-          <div className="flex items-center justify-between max-w-4xl mx-auto">
-            <div className="flex items-center space-x-2">
-              <span className="text-yellow-600">⚠️</span>
-              <span className="text-sm text-yellow-800">
+        <div className="fixed top-14 sm:top-16 left-0 right-0 z-30 bg-yellow-50 border-b border-yellow-200 px-3 sm:px-6 py-2">
+          <div className="flex items-start sm:items-center justify-between gap-2 max-w-4xl mx-auto">
+            <div className="flex items-start sm:items-center space-x-2 min-w-0">
+              <span className="text-yellow-600 shrink-0">⚠️</span>
+              <span className="text-xs sm:text-sm text-yellow-800 break-words">
                 API issue detected - Using enhanced demo data for presentation
               </span>
             </div>
-            <button 
+            <button
               onClick={() => setError(null)}
-              className="text-yellow-600 hover:text-yellow-800"
+              className="text-yellow-600 hover:text-yellow-800 shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center"
+              aria-label="Dismiss"
             >
               ✕
             </button>
@@ -249,26 +255,25 @@ const Index = () => {
       )}
 
       {/* Main Content */}
-      <main className={`pt-20 ${error ? 'pt-32' : 'pt-20'}`}>
+      <main className={`pt-16 sm:pt-20 ${error ? 'pt-28 sm:pt-32' : ''} pb-6 safe-pb`}>
         {analysisState === 'idle' && (
           <SearchInterface onSearch={handleSearch} />
         )}
 
         {analysisState !== 'idle' && analysisState !== 'complete' && (
-          <AnalysisProgress 
-            state={analysisState} 
+          <AnalysisProgress
+            state={analysisState}
             topic={searchTopic}
           />
         )}
 
         {analysisState === 'complete' && resultsData && (
-          <>
-            <ResultsTabs 
-              data={resultsData} 
+          <div className="app-container">
+            <ResultsTabs
+              data={resultsData}
               topic={searchTopic}
             />
-            {/* <FloatingActionButton topic={searchTopic} /> */}
-          </>
+          </div>
         )}
       </main>
     </div>

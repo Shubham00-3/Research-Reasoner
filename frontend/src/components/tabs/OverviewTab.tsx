@@ -18,27 +18,27 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ data }) => {
   };
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-6 md:p-8">
       {/* Summary Section */}
-      <div className="mb-8">
-        <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+      <div className="mb-6 sm:mb-8">
+        <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3 sm:mb-4">
           Research Summary
         </h3>
-        <p className="text-lg text-gray-700 leading-relaxed">
+        <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
           {data.summary}
         </p>
       </div>
 
       {/* Key Findings */}
-      <div className="mb-8">
-        <h3 className="text-2xl font-semibold text-gray-800 mb-6">
+      <div className="mb-6 sm:mb-8">
+        <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6">
           Key Findings
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {data.keyFindings.map((finding, index) => (
             <div
               key={index}
-              className="border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:scale-105"
+              className="border border-gray-200 rounded-xl p-4 sm:p-6 hover:shadow-lg transition-all duration-300 sm:hover:scale-105"
             >
               <div className="flex items-center justify-between mb-3">
                 <h4 className="font-semibold text-gray-800">
@@ -82,15 +82,15 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ data }) => {
 
       {/* Next Steps */}
       <div className="text-center">
-        <h3 className="text-xl font-semibold text-gray-800 mb-4">
+        <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">
           Next Steps
         </h3>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button className="px-6 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-all duration-200 hover:scale-105 flex items-center space-x-2">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+          <button className="px-5 sm:px-6 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-all duration-200 sm:hover:scale-105 flex items-center justify-center space-x-2 min-h-[48px] text-sm sm:text-base">
             <span>Explore Detailed Insights</span>
             <ArrowDown size={18} />
           </button>
-          <button className="px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-200 hover:scale-105">
+          <button className="px-5 sm:px-6 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-200 sm:hover:scale-105 min-h-[48px] text-sm sm:text-base">
             Generate Research Draft
           </button>
         </div>

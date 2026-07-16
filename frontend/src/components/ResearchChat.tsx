@@ -171,34 +171,34 @@ I'll search through available papers and provide answers with citations!`,
 
   // ✅ REMOVED READINESS CHECK - ALWAYS SHOW CHAT
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full min-h-[50vh] sm:min-h-[520px] flex flex-col max-h-[calc(100dvh-12rem)] sm:max-h-none">
       {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 sm:space-y-6 overscroll-contain">
         {messages.map((message) => (
           <div
             key={message.id}
             className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
           >
-            <div className={`flex max-w-4xl ${message.type === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+            <div className={`flex max-w-[95%] sm:max-w-4xl ${message.type === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
               {/* Avatar */}
-              <div className={`flex-shrink-0 ${message.type === 'user' ? 'ml-3' : 'mr-3'}`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+              <div className={`flex-shrink-0 ${message.type === 'user' ? 'ml-2 sm:ml-3' : 'mr-2 sm:mr-3'}`}>
+                <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center ${
                   message.type === 'user' 
                     ? 'bg-blue-500 text-white' 
                     : 'bg-green-500 text-white'
                 }`}>
-                  {message.type === 'user' ? <User size={16} /> : <Bot size={16} />}
+                  {message.type === 'user' ? <User size={14} /> : <Bot size={14} />}
                 </div>
               </div>
 
               {/* Message Content */}
-              <div className={`flex-1 ${message.type === 'user' ? 'text-right' : 'text-left'}`}>
-                <div className={`inline-block p-4 rounded-xl ${
+              <div className={`flex-1 min-w-0 ${message.type === 'user' ? 'text-right' : 'text-left'}`}>
+                <div className={`inline-block p-3 sm:p-4 rounded-xl max-w-full text-left ${
                   message.type === 'user'
                     ? 'bg-blue-500 text-white'
                     : 'bg-gray-100 text-gray-900'
                 }`}>
-                  <div className="whitespace-pre-wrap">{message.content}</div>
+                  <div className="whitespace-pre-wrap text-sm sm:text-base break-words">{message.content}</div>
                   
                   {/* Confidence and Sources for Assistant */}
                   {message.type === 'assistant' && (
@@ -273,15 +273,15 @@ I'll search through available papers and provide answers with citations!`,
       </div>
 
       {/* Input Area */}
-      <div className="border-t bg-white p-4">
-        <div className="flex space-x-3">
-          <div className="flex-1">
+      <div className="border-t bg-white p-3 sm:p-4 safe-pb">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:space-x-0">
+          <div className="flex-1 min-w-0">
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder={`Ask me about ${topic || 'research papers'}...`}
-              className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder={`Ask about ${topic || 'research'}...`}
+              className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
               rows={2}
               disabled={isLoading}
             />
@@ -289,15 +289,16 @@ I'll search through available papers and provide answers with citations!`,
           <button
             onClick={handleSend}
             disabled={isLoading || !input.trim()}
-            className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+            className="px-4 sm:px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 min-h-[48px] shrink-0"
           >
             <Send size={16} />
-            <span>Send</span>
+            <span className="sm:inline">Send</span>
           </button>
         </div>
         
-        <div className="mt-2 text-xs text-gray-500">
-          Press Enter to send, Shift+Enter for new line • Status: {conversationId ? '🟢 Connected' : '🟡 Direct Mode'}
+        <div className="mt-2 text-[10px] sm:text-xs text-gray-500">
+          <span className="hidden sm:inline">Enter to send · Shift+Enter for new line · </span>
+          {conversationId ? 'Connected' : 'Direct mode'}
         </div>
       </div>
     </div>

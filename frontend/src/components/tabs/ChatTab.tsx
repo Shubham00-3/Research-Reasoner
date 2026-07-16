@@ -356,7 +356,7 @@ const ChatTab: React.FC<ChatTabProps> = ({ data, topic }) => {
   //   </div>
   // );
   return (
-    <div className="p-6 h-full">
+    <div className="p-2 sm:p-4 md:p-6 h-full min-h-[50vh] sm:min-h-[520px]">
       <ResearchChat topic={topic} />
     </div>
   );

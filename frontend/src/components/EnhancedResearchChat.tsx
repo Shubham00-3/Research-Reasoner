@@ -365,29 +365,29 @@ const EnhancedResearchChat: React.FC<EnhancedResearchChatProps> = ({ topic }) =>
   };
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-lg shadow-lg border border-gray-200">
+    <div className="flex flex-col h-full min-h-[50vh] sm:min-h-[520px] max-h-[calc(100dvh-12rem)] sm:max-h-none bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
       {/* Enhanced Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
-            <Brain className="w-6 h-6 text-white" />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
+        <div className="flex items-center space-x-3 min-w-0">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center shrink-0">
+            <Brain className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
           </div>
-          <div>
-            <h3 className="font-semibold text-gray-800">Enhanced Research Assistant</h3>
-            <p className="text-sm text-gray-600">
+          <div className="min-w-0">
+            <h3 className="font-semibold text-gray-800 text-sm sm:text-base truncate">Enhanced Research Assistant</h3>
+            <p className="text-xs sm:text-sm text-gray-600 truncate">
               {topic ? `Exploring ${topic}` : 'Multi-step reasoning enabled'}
             </p>
           </div>
         </div>
         
         {/* Research Mode Selector */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
           <div className="flex items-center space-x-2">
             <label className="text-xs font-medium text-gray-700">Mode:</label>
             <select
               value={researchMode}
               onChange={(e) => setResearchMode(e.target.value as any)}
-              className="text-xs border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500"
+              className="text-xs border border-gray-300 rounded px-2 py-2 focus:ring-2 focus:ring-blue-500 min-h-[40px]"
               disabled={isLoading}
             >
               <option value="simple">Simple</option>
@@ -399,7 +399,7 @@ const EnhancedResearchChat: React.FC<EnhancedResearchChatProps> = ({ topic }) =>
           <button
             onClick={generateReport}
             disabled={messages.length <= 1 || !conversationId}
-            className="flex items-center space-x-1 px-3 py-1 text-xs bg-gray-600 text-white rounded hover:bg-gray-700 disabled:opacity-50 transition-colors"
+            className="flex items-center space-x-1 px-3 py-2 text-xs bg-gray-600 text-white rounded hover:bg-gray-700 disabled:opacity-50 transition-colors min-h-[40px]"
             title="Generate Research Report"
           >
             <Download className="w-3 h-3" />
@@ -409,13 +409,13 @@ const EnhancedResearchChat: React.FC<EnhancedResearchChatProps> = ({ topic }) =>
       </div>
 
       {/* Mode Info Banner */}
-      <div className="px-4 py-2 bg-blue-50 border-b border-blue-200">
-        <div className="flex items-center space-x-2 text-xs">
-          <div className="flex items-center space-x-1">
-            {researchMode === 'simple' && <MessageSquare className="w-3 h-3 text-blue-600" />}
-            {researchMode === 'advanced' && <Layers className="w-3 h-3 text-purple-600" />}
-            {researchMode === 'investigation' && <GitBranch className="w-3 h-3 text-green-600" />}
-            <span className="font-medium text-gray-700">
+      <div className="px-3 sm:px-4 py-2 bg-blue-50 border-b border-blue-200">
+        <div className="flex items-center space-x-2 text-[10px] sm:text-xs">
+          <div className="flex items-start sm:items-center space-x-1 min-w-0">
+            {researchMode === 'simple' && <MessageSquare className="w-3 h-3 text-blue-600 shrink-0 mt-0.5 sm:mt-0" />}
+            {researchMode === 'advanced' && <Layers className="w-3 h-3 text-purple-600 shrink-0 mt-0.5 sm:mt-0" />}
+            {researchMode === 'investigation' && <GitBranch className="w-3 h-3 text-green-600 shrink-0 mt-0.5 sm:mt-0" />}
+            <span className="font-medium text-gray-700 break-words">
               {researchMode === 'simple' && 'Simple Mode: Quick answers from database'}
               {researchMode === 'advanced' && 'Advanced Mode: Deep analysis with multiple sources'}
               {researchMode === 'investigation' && 'Investigation Mode: Multi-step research reasoning'}
@@ -425,15 +425,15 @@ const EnhancedResearchChat: React.FC<EnhancedResearchChatProps> = ({ topic }) =>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ maxHeight: '500px' }}>
+      <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-4 overscroll-contain min-h-0">
         {messages.map((message) => (
           <div
             key={message.id}
             className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
           >
-            <div className={`flex items-start space-x-3 max-w-4xl ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+            <div className={`flex items-start gap-2 sm:space-x-3 max-w-[95%] sm:max-w-4xl min-w-0 ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
               {/* Avatar */}
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+              <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shrink-0 ${
                 message.type === 'user' 
                   ? 'bg-blue-600' 
                   : message.type === 'investigation'
@@ -441,22 +441,22 @@ const EnhancedResearchChat: React.FC<EnhancedResearchChatProps> = ({ topic }) =>
                   : 'bg-purple-600'
               }`}>
                 {message.type === 'user' ? (
-                  <User className="w-5 h-5 text-white" />
+                  <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 ) : message.type === 'investigation' ? (
-                  <GitBranch className="w-5 h-5 text-white" />
+                  <GitBranch className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 ) : (
-                  <Bot className="w-5 h-5 text-white" />
+                  <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 )}
               </div>
 
               {/* Message Content */}
-              <div className={`rounded-lg p-4 ${
+              <div className={`rounded-lg p-3 sm:p-4 min-w-0 max-w-full ${
                 message.type === 'user'
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-800'
               }`}>
                 {/* Main message */}
-                <div className="text-sm leading-relaxed">
+                <div className="text-sm leading-relaxed break-words">
                   {formatMessageContent(message.content)}
                 </div>
 
@@ -484,8 +484,8 @@ const EnhancedResearchChat: React.FC<EnhancedResearchChatProps> = ({ topic }) =>
                     {showSources === message.id && (
                       <div className="space-y-2">
                         {message.sources.map((source, index) => (
-                          <div key={index} className="text-xs bg-white p-2 rounded border border-gray-200">
-                            <div className="font-medium text-gray-800">{source.title}</div>
+                          <div key={index} className="text-xs bg-white p-2 rounded border border-gray-200 min-w-0">
+                            <div className="font-medium text-gray-800 break-words">{source.title}</div>
                             <div className="text-gray-600">
                               {source.authors?.slice(0, 2).join(', ')} ({source.year})
                             </div>
@@ -585,9 +585,9 @@ const EnhancedResearchChat: React.FC<EnhancedResearchChatProps> = ({ topic }) =>
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t border-gray-200">
-        <div className="flex items-end space-x-3">
-          <div className="flex-1">
+      <div className="p-3 sm:p-4 border-t border-gray-200 safe-pb">
+        <div className="flex flex-col sm:flex-row sm:items-end gap-2 sm:gap-3">
+          <div className="flex-1 min-w-0">
             <input
               ref={inputRef}
               type="text"
@@ -596,25 +596,27 @@ const EnhancedResearchChat: React.FC<EnhancedResearchChatProps> = ({ topic }) =>
               onKeyPress={handleKeyPress}
               placeholder={
                 researchMode === 'investigation' 
-                  ? "Ask a complex research question for multi-step investigation..."
+                  ? "Ask a complex research question..."
                   : researchMode === 'advanced'
-                  ? "Ask for advanced analysis of your research topic..."
+                  ? "Ask for advanced analysis..."
                   : "Ask about your research papers..."
               }
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
               disabled={isLoading}
             />
           </div>
           <button
             onClick={() => sendMessage()}
             disabled={!inputMessage.trim() || isLoading}
-            className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[48px] flex items-center justify-center gap-2 shrink-0"
+            aria-label="Send"
           >
             <Send className="w-5 h-5" />
+            <span className="sm:hidden text-sm font-medium">Send</span>
           </button>
         </div>
         
-        <div className="mt-2 text-xs text-gray-500">
+        <div className="mt-2 text-[10px] sm:text-xs text-gray-500 hidden sm:block">
           {researchMode === 'investigation' && 'Investigation mode: Complex questions will be broken down into research steps'}
           {researchMode === 'advanced' && 'Advanced mode: Deep analysis with enhanced reasoning'}
           {researchMode === 'simple' && 'Simple mode: Quick answers from your research database'}

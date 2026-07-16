@@ -63,7 +63,30 @@ const KnowledgeMapTab: React.FC<KnowledgeMapTabProps> = ({ data, topic = "resear
   const [loadingContent, setLoadingContent] = useState(false);
   const [downloadStatus, setDownloadStatus] = useState({ downloaded: 0, total: 0 });
   const [contentExpanded, setContentExpanded] = useState(false);
+  const [graphWidth, setGraphWidth] = useState(800);
+  const [graphHeight, setGraphHeight] = useState(520);
+  const graphContainerRef = useRef<HTMLDivElement>(null);
   const forceRef = useRef<any>();
+
+  // Responsive graph canvas size
+  useEffect(() => {
+    const measure = () => {
+      const el = graphContainerRef.current;
+      const w = el?.clientWidth || Math.min(window.innerWidth - 24, 1200);
+      setGraphWidth(Math.max(280, w));
+      // Shorter on phones, taller on tablets/desktops
+      const h =
+        window.innerWidth < 640
+          ? Math.min(420, Math.max(320, window.innerHeight * 0.45))
+          : window.innerWidth < 1024
+            ? Math.min(560, Math.max(420, window.innerHeight * 0.55))
+            : Math.min(700, Math.max(520, window.innerHeight * 0.6));
+      setGraphHeight(h);
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, []);
 
   // Helper functions
   const formatFileSize = (bytes: number): string => {
@@ -448,55 +471,53 @@ const KnowledgeMapTab: React.FC<KnowledgeMapTabProps> = ({ data, topic = "resear
 
   if (isLoading) {
     return (
-      <div className="h-[600px] flex items-center justify-center">
-        <div className="text-center">
+      <div className="min-h-[50vh] sm:min-h-[400px] md:h-[600px] flex items-center justify-center px-4">
+        <div className="text-center max-w-md">
           <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-gray-600">Building knowledge graph for {data.papersFound} papers...</p>
-          <p className="text-sm text-gray-500 mt-2">Papers are being downloaded automatically in the background</p>
+          <p className="text-sm sm:text-base text-gray-600">Building knowledge graph for {data.papersFound} papers...</p>
+          <p className="text-xs sm:text-sm text-gray-500 mt-2">Papers are being downloaded automatically in the background</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-4 sm:space-y-6 p-3 sm:p-4 md:p-6">
       {/* Header with Download Status */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-xl font-semibold text-gray-800">Interactive Knowledge Graph</h3>
-          <p className="text-sm text-gray-600 mt-1">
-            Visualizing {graphData.nodes.length} papers with {graphData.links.length} connections
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h3 className="text-lg sm:text-xl font-semibold text-gray-800">Interactive Knowledge Graph</h3>
+          <p className="text-xs sm:text-sm text-gray-600 mt-1">
+            {graphData.nodes.length} papers · {graphData.links.length} connections
           </p>
-          <div className="flex items-center space-x-2 mt-2">
-            <div className="text-sm text-green-600 font-medium">
-              📥 Auto-downloaded: {downloadStatus.downloaded} of {downloadStatus.total} papers
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-2">
+            <div className="text-xs sm:text-sm text-green-600 font-medium">
+              Local files: {downloadStatus.downloaded} of {downloadStatus.total}
             </div>
-            {downloadStatus.downloaded < downloadStatus.total && (
-              <div className="text-sm text-blue-600">
-                (Download in progress...)
-              </div>
+            {downloadStatus.downloaded < downloadStatus.total && downloadStatus.total > 0 && (
+              <div className="text-xs sm:text-sm text-blue-600">(downloading…)</div>
             )}
           </div>
         </div>
-        
-        <div className="flex items-center space-x-2">
+
+        <div className="flex items-center space-x-2 self-end sm:self-auto">
           <button
             onClick={handleZoomIn}
-            className="p-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
+            className="p-2.5 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm touch-target flex items-center justify-center"
             title="Zoom In"
           >
             <ZoomIn size={16} />
           </button>
           <button
             onClick={handleZoomOut}
-            className="p-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
+            className="p-2.5 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm touch-target flex items-center justify-center"
             title="Zoom Out"
           >
             <ZoomOut size={16} />
           </button>
           <button
             onClick={handleReset}
-            className="p-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
+            className="p-2.5 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm touch-target flex items-center justify-center"
             title="Reset View"
           >
             <RotateCcw size={16} />
@@ -504,35 +525,48 @@ const KnowledgeMapTab: React.FC<KnowledgeMapTabProps> = ({ data, topic = "resear
         </div>
       </div>
 
-      {/* Graph Container */}
-      <div className="relative bg-white rounded-xl border border-gray-200 overflow-hidden shadow-lg">
+      {/* Graph Container — sized to viewport */}
+      <div
+        ref={graphContainerRef}
+        className="relative bg-white rounded-xl border border-gray-200 overflow-hidden shadow-lg w-full"
+        style={{ height: graphHeight }}
+      >
         <ForceGraph2D
           ref={forceRef}
           graphData={graphData}
-          width={window.innerWidth}
-          height={700}
+          width={graphWidth}
+          height={graphHeight}
+          backgroundColor="#ffffff"
           nodeLabel="title"
           nodeColor={(node: any) => node.color || '#3B82F6'}
           nodeVal={(node: any) => node.size || 10}
           linkColor={getLinkColor}
-          linkWidth={(link: any) => Math.max(1, link.strength * 4)}
-          linkDirectionalParticles={1}
+          linkWidth={(link: any) => Math.max(1, (link.strength || 0.5) * 4)}
+          linkDirectionalParticles={window.innerWidth < 640 ? 0 : 1}
           linkDirectionalParticleWidth={2}
           onNodeClick={handleNodeClick}
           nodeCanvasObject={(node: any, ctx: CanvasRenderingContext2D, globalScale: number) => {
-            const label = node.title;
-            const fontSize = Math.max(6, 10 / globalScale);
+            if (!Number.isFinite(node.x) || !Number.isFinite(node.y)) return;
+            const label = node.title || '';
+            const fontSize = Math.max(6, Math.min(11, 10 / globalScale));
             ctx.font = `${fontSize}px Inter, sans-serif`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillStyle = '#374151';
-            
-            // Draw title (truncated)
-            const maxLength = globalScale > 0.5 ? 50 : 30;
-            const truncatedLabel = label.length > maxLength ? label.substring(0, maxLength) + '...' : label;
+
+            // Shorter labels on small screens
+            const maxLength =
+              window.innerWidth < 640
+                ? globalScale > 0.8
+                  ? 28
+                  : 16
+                : globalScale > 0.5
+                  ? 50
+                  : 30;
+            const truncatedLabel =
+              label.length > maxLength ? label.substring(0, maxLength) + '...' : label;
             ctx.fillText(truncatedLabel, node.x, node.y + (node.size || 10) + 12);
-            
-            // Draw download indicator
+
             if (node.hasLocalFile && globalScale > 0.8) {
               ctx.fillStyle = '#10B981';
               ctx.font = `${fontSize * 0.6}px Inter, sans-serif`;
@@ -546,25 +580,25 @@ const KnowledgeMapTab: React.FC<KnowledgeMapTabProps> = ({ data, topic = "resear
           enablePanInteraction={true}
         />
 
-        {/* Legend */}
-        <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg p-4 border border-gray-200 shadow-lg">
-          <h4 className="text-sm font-semibold text-gray-800 mb-3">Legend</h4>
-          <div className="space-y-2 text-xs">
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-              <span className="text-gray-600">Downloaded Papers</span>
+        {/* Legend — compact on mobile */}
+        <div className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-white/95 backdrop-blur-sm rounded-lg p-2 sm:p-4 border border-gray-200 shadow-lg max-w-[45%] sm:max-w-none">
+          <h4 className="text-[10px] sm:text-sm font-semibold text-gray-800 mb-1 sm:mb-3">Legend</h4>
+          <div className="space-y-1 sm:space-y-2 text-[10px] sm:text-xs">
+            <div className="flex items-center space-x-1.5 sm:space-x-2">
+              <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 rounded-full shrink-0"></div>
+              <span className="text-gray-600 truncate">Downloaded</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-              <span className="text-gray-600">Processing...</span>
+            <div className="flex items-center space-x-1.5 sm:space-x-2">
+              <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-blue-500 rounded-full shrink-0"></div>
+              <span className="text-gray-600 truncate">Papers</span>
             </div>
           </div>
         </div>
 
         {/* Stats Panel */}
-        <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm rounded-lg p-3 border border-gray-200 shadow-lg">
-          <div className="text-xs space-y-1">
-            <div className="font-semibold text-gray-800">Graph Stats</div>
+        <div className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-white/95 backdrop-blur-sm rounded-lg p-2 sm:p-3 border border-gray-200 shadow-lg">
+          <div className="text-[10px] sm:text-xs space-y-0.5 sm:space-y-1">
+            <div className="font-semibold text-gray-800">Stats</div>
             <div className="text-gray-600">Papers: <span className="font-medium text-blue-600">{graphData.nodes.length}</span></div>
           </div>
         </div>
@@ -574,11 +608,11 @@ const KnowledgeMapTab: React.FC<KnowledgeMapTabProps> = ({ data, topic = "resear
       {selectedNode && (
         <div className="bg-white rounded-xl border border-gray-200 shadow-xl overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-6 py-4 border-b border-gray-200">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="flex items-center space-x-2 mb-2">
-                  <h2 className="text-xl font-bold text-gray-900 leading-tight">
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-3 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  <h2 className="text-base sm:text-xl font-bold text-gray-900 leading-tight break-words">
                     {selectedNode.title}
                   </h2>
                   {selectedNode.hasLocalFile && (
@@ -594,7 +628,7 @@ const KnowledgeMapTab: React.FC<KnowledgeMapTabProps> = ({ data, topic = "resear
                     </span>
                   )}
                 </div>
-                <div className="flex items-center space-x-4 text-sm text-gray-600">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm text-gray-600">
                   <div className="flex items-center space-x-1">
                     <Calendar size={14} />
                     <span>{selectedNode.year}</span>
@@ -604,16 +638,17 @@ const KnowledgeMapTab: React.FC<KnowledgeMapTabProps> = ({ data, topic = "resear
                     <span>{selectedNode.citationCount} citations</span>
                   </div>
                   {selectedNode.venue && (
-                    <div className="flex items-center space-x-1">
-                      <Building size={14} />
-                      <span>{selectedNode.venue}</span>
+                    <div className="flex items-center space-x-1 min-w-0">
+                      <Building size={14} className="shrink-0" />
+                      <span className="truncate max-w-[200px] sm:max-w-none">{selectedNode.venue}</span>
                     </div>
                   )}
                 </div>
               </div>
               <button
                 onClick={() => { setSelectedNode(null); setPaperContent(null); setContentExpanded(false); }}
-                className="ml-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-white rounded-lg transition-colors"
+                className="shrink-0 p-2 text-gray-400 hover:text-gray-600 hover:bg-white rounded-lg transition-colors touch-target flex items-center justify-center"
+                aria-label="Close"
               >
                 ✕
               </button>
@@ -621,7 +656,7 @@ const KnowledgeMapTab: React.FC<KnowledgeMapTabProps> = ({ data, topic = "resear
           </div>
 
           {/* 🎯 FULL PAPER CONTENT DISPLAY */}
-          <div className="p-6 space-y-6">
+          <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
             {loadingContent ? (
               <div className="flex items-center justify-center py-8">
                 <div className="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mr-3"></div>
@@ -684,33 +719,33 @@ const KnowledgeMapTab: React.FC<KnowledgeMapTabProps> = ({ data, topic = "resear
                 )}
 
                 {/* Paper Metrics */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
                   <div className="bg-blue-50 rounded-lg p-3 text-center">
-                    <div className="text-2xl font-bold text-blue-600">{selectedNode.citationCount}</div>
+                    <div className="text-xl sm:text-2xl font-bold text-blue-600">{selectedNode.citationCount}</div>
                     <div className="text-xs text-blue-800">Citations</div>
                   </div>
                   <div className="bg-green-50 rounded-lg p-3 text-center">
-                    <div className="text-2xl font-bold text-green-600">{selectedNode.authors.length}</div>
+                    <div className="text-xl sm:text-2xl font-bold text-green-600">{selectedNode.authors.length}</div>
                     <div className="text-xs text-green-800">Authors</div>
                   </div>
                   <div className="bg-purple-50 rounded-lg p-3 text-center">
-                    <div className="text-2xl font-bold text-purple-600">{selectedNode.year}</div>
+                    <div className="text-xl sm:text-2xl font-bold text-purple-600">{selectedNode.year}</div>
                     <div className="text-xs text-purple-800">Year</div>
                   </div>
                   <div className="bg-orange-50 rounded-lg p-3 text-center">
-                    <div className="text-2xl font-bold text-orange-600">
-                      {selectedNode.fileSize ? formatFileSize(selectedNode.fileSize) : 'Processing...'}
+                    <div className="text-lg sm:text-2xl font-bold text-orange-600 break-all">
+                      {selectedNode.fileSize ? formatFileSize(selectedNode.fileSize) : '…'}
                     </div>
                     <div className="text-xs text-orange-800">File Status</div>
                   </div>
                 </div>
 
                 {/* Action Buttons - NO EXTERNAL LINKS */}
-                <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+                <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 pt-4 border-t border-gray-200">
                   {/* Refresh Content Button */}
                   <button
                     onClick={() => fetchPaperContent(selectedNode.id)}
-                    className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex items-center justify-center space-x-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors min-h-[44px] text-sm"
                   >
                     <Download size={16} />
                     <span>Load Full Content</span>

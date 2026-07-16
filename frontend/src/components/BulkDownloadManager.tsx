@@ -140,11 +140,11 @@ const BulkDownloadManager: React.FC<BulkDownloadManagerProps> = ({
   return (
     <div className="space-y-4">
       {/* Download Control Panel */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800">Bulk Paper Download</h3>
-            <p className="text-sm text-gray-600">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div className="min-w-0">
+            <h3 className="text-base sm:text-lg font-semibold text-gray-800">Bulk Paper Download</h3>
+            <p className="text-xs sm:text-sm text-gray-600">
               Download all {papers.length} papers for offline access and analysis
             </p>
           </div>
@@ -152,35 +152,35 @@ const BulkDownloadManager: React.FC<BulkDownloadManagerProps> = ({
           <button
             onClick={startBulkDownload}
             disabled={isDownloading || papers.length === 0}
-            className="flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] w-full sm:w-auto shrink-0"
           >
             <Download size={20} />
-            <span>
-              {isDownloading ? 'Downloading...' : `Download All ${papers.length} Papers`}
+            <span className="text-sm sm:text-base">
+              {isDownloading ? 'Downloading...' : `Download All ${papers.length}`}
             </span>
           </button>
         </div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
           <div className="bg-blue-50 rounded-lg p-3 text-center">
-            <div className="text-2xl font-bold text-blue-600">{papers.length}</div>
+            <div className="text-xl sm:text-2xl font-bold text-blue-600">{papers.length}</div>
             <div className="text-xs text-blue-800">Total Papers</div>
           </div>
           <div className="bg-green-50 rounded-lg p-3 text-center">
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-xl sm:text-2xl font-bold text-green-600">
               {downloadResult?.completed || 0}
             </div>
             <div className="text-xs text-green-800">Downloaded</div>
           </div>
           <div className="bg-red-50 rounded-lg p-3 text-center">
-            <div className="text-2xl font-bold text-red-600">
+            <div className="text-xl sm:text-2xl font-bold text-red-600">
               {downloadResult?.failed || 0}
             </div>
             <div className="text-xs text-red-800">Failed</div>
           </div>
           <div className="bg-purple-50 rounded-lg p-3 text-center">
-            <div className="text-2xl font-bold text-purple-600">
+            <div className="text-xl sm:text-2xl font-bold text-purple-600 break-all">
               {downloadResult?.totalSize ? formatFileSize(downloadResult.totalSize) : '0 MB'}
             </div>
             <div className="text-xs text-purple-800">Total Size</div>
@@ -192,17 +192,18 @@ const BulkDownloadManager: React.FC<BulkDownloadManagerProps> = ({
       {showProgress && downloadResult && (
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
           {/* Progress Header */}
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="text-lg font-semibold text-gray-800">Download Progress</h4>
-                <p className="text-sm text-gray-600">
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+            <div className="flex items-start sm:items-center justify-between gap-2">
+              <div className="min-w-0">
+                <h4 className="text-base sm:text-lg font-semibold text-gray-800">Download Progress</h4>
+                <p className="text-xs sm:text-sm text-gray-600">
                   {downloadResult.completed + downloadResult.failed} of {downloadResult.totalPapers} processed
                 </p>
               </div>
               <button
                 onClick={() => setShowProgress(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-400 hover:text-gray-600 min-h-[44px] min-w-[44px] flex items-center justify-center shrink-0"
+                aria-label="Close progress"
               >
                 ✕
               </button>
@@ -210,7 +211,7 @@ const BulkDownloadManager: React.FC<BulkDownloadManagerProps> = ({
             
             {/* Overall Progress Bar */}
             <div className="mt-4">
-              <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+              <div className="flex items-center justify-between text-xs sm:text-sm text-gray-600 mb-2">
                 <span>Overall Progress</span>
                 <span>{getOverallProgress()}%</span>
               </div>
@@ -224,41 +225,41 @@ const BulkDownloadManager: React.FC<BulkDownloadManagerProps> = ({
           </div>
 
           {/* Individual Paper Progress */}
-          <div className="max-h-96 overflow-y-auto">
+          <div className="max-h-72 sm:max-h-96 overflow-y-auto overscroll-contain">
             {downloadResult.progress.map((item, index) => (
               <div
                 key={item.paperId}
-                className={`px-6 py-3 border-b border-gray-100 ${
+                className={`px-3 sm:px-6 py-3 border-b border-gray-100 ${
                   item.status === 'completed' ? 'bg-green-50' :
                   item.status === 'failed' ? 'bg-red-50' :
                   item.status === 'downloading' ? 'bg-blue-50' : 'bg-gray-50'
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3 flex-1">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
                     {getStatusIcon(item.status)}
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-800 truncate">
+                      <p className="text-xs sm:text-sm font-medium text-gray-800 truncate">
                         {item.title}
                       </p>
-                      <div className="flex items-center space-x-4 text-xs text-gray-500 mt-1">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[10px] sm:text-xs text-gray-500 mt-1">
                         <span>Paper {index + 1}</span>
                         {item.fileSize && (
                           <span>{formatFileSize(item.fileSize)}</span>
                         )}
                         {item.error && (
-                          <span className="text-red-600">{item.error}</span>
+                          <span className="text-red-600 break-words">{item.error}</span>
                         )}
                       </div>
                     </div>
                   </div>
                   
                   {/* Action Buttons */}
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 shrink-0">
                     {item.status === 'completed' && item.filePath && (
                       <button
                         onClick={() => window.open(getPaperDownloadUrl(item.paperId), '_blank')}
-                        className="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-colors"
+                        className="p-2.5 text-green-600 hover:bg-green-100 rounded-lg transition-colors touch-target flex items-center justify-center"
                         title="View Downloaded File"
                       >
                         <FileText size={14} />
@@ -283,18 +284,18 @@ const BulkDownloadManager: React.FC<BulkDownloadManagerProps> = ({
           </div>
 
           {/* Progress Footer */}
-          <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center space-x-4">
+          <div className="bg-gray-50 px-3 sm:px-6 py-3 sm:py-4 border-t border-gray-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs sm:text-sm">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span className="text-gray-600">
                   Session: {sessionId?.substring(0, 8)}...
                 </span>
-                <span className="text-gray-600">
+                <span className="text-gray-600 truncate max-w-full">
                   Topic: {topic}
                 </span>
               </div>
               
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <span className="text-green-600 font-medium">
                   ✓ {downloadResult.completed} completed
                 </span>
@@ -314,44 +315,44 @@ const BulkDownloadManager: React.FC<BulkDownloadManagerProps> = ({
 
       {/* Download Complete Summary */}
       {downloadResult && !isDownloading && getOverallProgress() === 100 && (
-        <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl border border-green-200 p-6">
+        <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl border border-green-200 p-4 sm:p-6">
           <div className="flex items-center space-x-3 mb-4">
-            <CheckCircle size={24} className="text-green-500" />
-            <h4 className="text-lg font-semibold text-gray-800">Download Complete!</h4>
+            <CheckCircle size={24} className="text-green-500 shrink-0" />
+            <h4 className="text-base sm:text-lg font-semibold text-gray-800">Download Complete!</h4>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">{downloadResult.completed}</div>
-              <div className="text-sm text-gray-600">Successfully Downloaded</div>
+              <div className="text-xl sm:text-2xl font-bold text-green-600">{downloadResult.completed}</div>
+              <div className="text-xs sm:text-sm text-gray-600">Successfully Downloaded</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-red-600">{downloadResult.failed}</div>
-              <div className="text-sm text-gray-600">Failed Downloads</div>
+              <div className="text-xl sm:text-2xl font-bold text-red-600">{downloadResult.failed}</div>
+              <div className="text-xs sm:text-sm text-gray-600">Failed Downloads</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">
+              <div className="text-xl sm:text-2xl font-bold text-blue-600">
                 {formatFileSize(downloadResult.totalSize)}
               </div>
-              <div className="text-sm text-gray-600">Total Downloaded</div>
+              <div className="text-xs sm:text-sm text-gray-600">Total Downloaded</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">
+              <div className="text-xl sm:text-2xl font-bold text-purple-600">
                 {Math.round((downloadResult.completed / downloadResult.totalPapers) * 100)}%
               </div>
-              <div className="text-sm text-gray-600">Success Rate</div>
+              <div className="text-xs sm:text-sm text-gray-600">Success Rate</div>
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-600">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <p className="text-xs sm:text-sm text-gray-600">
               All papers have been processed and are now available for offline access through the knowledge graph.
             </p>
             
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 shrink-0">
               <button
                 onClick={() => setShowProgress(false)}
-                className="px-4 py-2 bg-white text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                className="w-full sm:w-auto px-4 py-2.5 bg-white text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors min-h-[44px]"
               >
                 Hide Details
               </button>
